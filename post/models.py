@@ -3,8 +3,6 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image
-from enumfields import EnumField
-from enumfields import Enum 
 
 class Post(models.Model):
     title = models.CharField(max_length=100)

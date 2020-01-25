@@ -5,7 +5,6 @@ from django.views.generic import (
     ListView,
     DetailView, 
     CreateView,
-    UpdateView,
     DeleteView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -16,7 +15,6 @@ from .serializers import PostSerialize, CommentSerialize, ProfileSerialize
 from django.http import HttpResponseRedirect
 from rest_framework.response import Response
 from .tasks import send_email_task
-import json
 
 from django.core.serializers import serialize 
 
@@ -36,28 +34,14 @@ def show_post(request, pk):
     
     if request.method == 'POST':
 
-        # print('---------------')
-        # print(request.user.email)
-        # print(post.author.email)
-        # print('---------------')
-        # quit()
 
         comment_form = CommentForm(request.POST or None)
         if comment_form.is_valid():
             content = request.POST.get('content')
-            # comment = Comment.objects.create(post=post,user=request.user, content=content)
-            # comment.save()
+            comment = Comment.objects.create(post=post,user=request.user, content=content)
+            comment.save()
 
             to = post.author.email
-            # user = 'sdd'
-            # print('---------------')
-            # str_data = serialize('json', request.user, cls=DjangoJSONEncoder)
-            # print(type(request.user))
-            # data = json.loads(request.user)
-            # print(data)
-
-            # print('---------------')
-            # quit()
             send_email_task.delay(to, content)
 
             return HttpResponseRedirect(post.get_absolute_url())
@@ -93,19 +77,3 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView ):
         if self.request.user == post.author:
             return True
         return False
-
-    
-
-
-class PostView(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerialize
-    
-class CommentView(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerialize
-    
-class ProfileView(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerialize
-    
