@@ -1,0 +1,101 @@
+{% extends 'post/main.html' %}
+
+{% block main_section %}
+        <div  class='alert alert-light'>
+                <a href="{% url 'post-home' %}">Вернуться назад</a>
+              
+               
+
+                <div class='correctText'><h1>{{ post.title }}</h1></div>
+                <div class='correctText'><p>{{ post.text }}</p></div>
+                
+                <img  style="width:500px; height:400px;"  src="{{post.img.url}}">
+                <div class ='row'>
+                        <div>
+                                {% if post.author.profile.img %}
+                                        <img src="{{post.author.profile.img.url}}"   alt="{{post.author}}" class="user_image">
+                                {% else %}
+                                        <img src="pictures/default.jpg" alt="{{post.author}}" class="user_image">
+                                {% endif %}
+                                </div>
+                        <div class='mt-2'>
+                                <span class='text-muted'>Публикация: {{ post.date|date:'d E Y в H:i:s' }}</span>
+                                <p><b>Автор: </b><mark>{{ post.author }}</mark></p>
+                        </div>
+                </div>
+                
+                {% if post.author == user %}
+                <hr>
+                <a href='{% url "post-delete" post.id %}' class='btn btn-danger'>Удалить пост</a>
+                {% endif %}
+                
+                <br><br><br><h2>Comments ({{comments.count}}) <hr></h2><br><br>
+                
+
+                {% for data in comments %}
+                       
+                
+                <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="{{data.user.profile.img.url}}" class="img img-rounded img-fluid"/>
+                                        </div>
+                                        <div class="col-md-10">
+                                                
+                                            <p>
+     
+                                                        <br>
+                                                        <a class="float-left" href="{{data.profile.img.url}}"><strong>{{data.user}}</strong> </a>
+                                                        
+                                           </p>
+                                           <div class="clearfix"></div>
+                                            <p>{{data.content}}</p>
+                                          
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                </div>
+                            </div>
+                            
+                {% endfor %}
+                        {% if user.is_authenticated %}
+                            <div class="container">
+                                        <br><br><br><br>
+                                        <div class="row">
+                                                <h3>Post a comment</h3>
+                                        </div>
+                                        <hr>
+                                    
+                                    <div class="row">
+                                                
+                                        <div class="col-md-6">
+                                        
+                                                <div class="widget-area no-padding blank">
+                                                        <div class="status-upload">
+                                                                <form method='POST'>
+                                                                        {% csrf_token %}
+                                                                        {{ comment_form.as_p}}
+                                                        
+                                                                        
+                                                                        <button type="submit" name='comment' class="btn btn-success green"><i class="fa fa-share"></i> Add</button>
+                                                                </form>
+                                                        </div><!-- Status Upload  -->
+                                                </div><!-- Widget Area -->
+                                        
+                                        </div>
+                                        
+                                    </div>
+                                    <br><br><br><br>
+                                </div>
+                        {% else %}<br><br><br>
+                        <div class="row">
+                                        
+                                        <h3>Please log in to post a comment</h3>
+                                
+                        </div>
+                        <br><br><br>
+                        {% endif %}
+        </div>
+{% endblock main_section %}

@@ -1,0 +1,31 @@
+{% extends 'post/main.html' %}
+
+{% block main_section %}
+
+{% for data in post %}
+
+        <div class='alert alert-light'>
+                
+                <div class='correctText'><h1>{{ data.title }}</h1></div>
+                <div class='correctText'><p>{{ data.text }}</p></div>
+
+                
+                <a href="{% url 'post-detail' data.id %}"><img  style=" height:400px; width:688; "  src="{{data.img.url}}"></a>
+                <div class ='row'>
+                        <div>
+                                {% if data.author.profile.img %}
+                                        <img src="{{data.author.profile.img.url}}" alt="{{post.author}}" class="user_image">
+                                {% else %}
+                                        <img src="pictures/default.jpg" alt="{{post.author}}" class="user_image">
+                                {% endif %}
+                        </div>
+                        <div class='mt-2'>
+                                <span class='text-muted'>Создано: {{ data.date|date:'d E Y в H:i:s' }}</span>
+                                <p><b>Автор: </b><mark>{{ data.author }}</mark></p>
+                        </div>
+                </div>
+                <a href="{% url 'post-detail' data.id %}" class='btn btn-outline-warning'>Открыть</a>
+        </div>
+{% endfor %}
+
+{% endblock main_section %}
